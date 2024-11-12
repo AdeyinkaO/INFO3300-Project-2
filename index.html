@@ -66,7 +66,6 @@
             .attr("width", width)
             .attr("height", height);
 
-        // Tooltip
         const tooltip = d3.select("#tooltip");
 
         // Load the data (GeoJSON and JSON)
@@ -82,8 +81,8 @@
                     .enter().append("path")
                     .attr("class", "state")
                     .attr("d", path)
-                    .attr("stroke", "black")  // Set the default stroke color
-                    .attr("stroke-width", 1)  // Set the default stroke width
+                    .attr("stroke", "black") 
+                    .attr("stroke-width", 1)  
                     .on("mouseover", function(event, d) {
                         const selectedEnvironmentalFactor = d3.select("#environment").node().value;
                         let tooltipText = `State: ${d.properties.name}<br> Mental Health Rank: ${getMentalHealthRank(d.properties.name, mentalHealthData)}`;
