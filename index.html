@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 5px;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Interactive Visualization of Environmental Factors and Mental Health</h1>
+    <p>
+        We’re creating an interactive visualization to explore how environmental factors affect mental health and well-being.
+        Users can filter data by demographic (age, gender, income) and environmental variables (air quality, green space).
+        Key features include a geographic map that shows trends by region, tooltips with additional data, and drop-down filters to help users identify patterns more clearly.
+    </p>
+
+    <div id="filters">
+        <!-- Dropdowns for filtering (e.g., by demographic, environmental factors) -->
+        <label for="demographic">Choose a demographic:</label>
+        <select id="demographic">
+            <option value="all">All</option>
+            <option value="age">Age</option>
+            <option value="gender">Gender</option>
+            <option value="income">Income</option>
+        </select>
+
+        <label for="environment">Choose an environmental factor:</label>
+        <select id="environment">
+            <option value="air_quality">Air Quality</option>
+            <option value="green_space">Green Space</option>
+        </select>
+    </div>
+
+    <div id="time-slider">
+        <!-- Time slider for visualizing changes over time -->
+        <label for="time">Select a time period:</label>
+        <input type="range" id="time" min="2024" max="2024" value="2024" step="1">
+        <span id="time-label">2024</span>
+    </div>
+
+    <div id="map"></div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Set up dimensions and map projection
+        const width = 960, height = 600;
+        const projection = d3.geoAlbersUsa().translate([width / 2, height / 2]).scale(1000);
+        const path = d3.geoPath().projection(projection);
+
+        // Set up SVG for map
+        const svg = d3.select("#map").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Tooltip
+        const tooltip = d3.select("#tooltip");
+
+        // Load the data (GeoJSON and JSON)
+        d3.json("us-states.topojson").then(function(geoData) {
+            d3.json("US_Environmental_and_mental_health_data.json").then(function(mentalHealthData) {
+
+                // Convert TopoJSON to GeoJSON
+                const states = topojson.feature(geoData, geoData.objects.states).features;
+
+                // Draw the map
+                svg.selectAll(".state")
+                    .data(states)
+                    .enter().append("path")
+                    .attr("class", "state")
+                    .attr("d", path)
+                    .on("mouseover", function(event, d) {
+                        tooltip.style("visibility", "visible")
+                            .html(`
+                                State: ${d.properties.name}<br>
+                                Mental Health Rank: ${getMentalHealthRank(d.properties.name, mentalHealthData)}<br>
+                                Air Quality: ${getAirQuality(d.properties.name, mentalHealthData)} µg/m³<br>
+                                Green Space: ${getGreenSpace(d.properties.name, mentalHealthData)}%`)
+                            .style("top", (event.pageY + 5) + "px")
+                            .style("left", (event.pageX + 5) + "px");
+                        
+                        // Highlight the state by increasing stroke width
+                        d3.select(this).style("stroke", "black").style("stroke-width", "2");
+                    })
+                    .on("mousemove", function(event) {
+                        tooltip.style("top", (event.pageY + 5) + "px")
+                            .style("left", (event.pageX + 5) + "px");
+                    })
+                    .on("mouseout", function() {
+                        tooltip.style("visibility", "hidden");
+
+                        // Remove highlight by resetting stroke width
+                        d3.select(this).style("stroke", "none").style("stroke-width", "1");
+                    });
+
+                // Function to get mental health rank for each state
+                function getMentalHealthRank(stateName, data) {
+                    const stateData = data.find(d => d.state === stateName);
+                    return stateData ? stateData.mental_health_rank : "No data";
+                }
+
+                // Function to get green space for each state
+                function getGreenSpace(stateName, data) {
+                    const stateData = data.find(d => d.state === stateName);
+                    return stateData ? stateData.green_space : "No data";
+                }
+
+                // Function to get air quality for each state
+                function getAirQuality(stateName, data) {
+                    const stateData = data.find(d => d.state === stateName);
+                    return stateData ? stateData.air_quality : "No data";
+                }
+
+                // Handle time slider change
+                d3.select("#time").on("input", function() {
+                    const year = this.value;
+                    d3.select("#time-label").text(year);
+                    // Update map based on selected time period
+                    updateMapForTime(year, mentalHealthData);
+                });
+
+                // Update the map with time-based data
+                function updateMapForTime(year, data) {
+                    svg.selectAll(".state")
+                        .transition()
+                        .duration(500)
+                        .style("fill", function(d) {
+                            const stateData = data.find(item => item.state === d.properties.name && item.year == year);
+                            return stateData ? getColorForHealthRank(stateData) : "#ccc";
+                        });
+                }
+
+                // Function to determine color based on mental health rank
+                function getColorForHealthRank(stateData) {
+                    const rank = stateData.mental_health_rank;
+
+                    // Green for the top 15 states
+                    if (rank <= 15) return "green";
+                    // Yellow for the next 15 states
+                    if (rank <= 30) return "yellow";
+                    // Red for the remaining states
+                    return "red";
+                }
+
+                // Initialize map for the first time period (2024)
+                updateMapForTime(2024, mentalHealthData);
+            });
+        });
+
+    </script>
+</body>
+</html>

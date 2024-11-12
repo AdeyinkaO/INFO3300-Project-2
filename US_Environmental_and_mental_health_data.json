@@ -1,0 +1,402 @@
+[
+    {
+        "state": "Alabama",
+        "year": 2024,
+        "mental_health_rank": 39,
+        "demographic": "age",
+        "air_quality": 46.6,
+        "green_space": 36.1
+    },
+    {
+        "state": "Alaska",
+        "year": 2024,
+        "mental_health_rank": 48,
+        "demographic": "income",
+        "air_quality": 29.1,
+        "green_space": 40.9
+    },
+    {
+        "state": "Arizona",
+        "year": 2024,
+        "mental_health_rank": 50,
+        "demographic": "gender",
+        "air_quality": 45.4,
+        "green_space": 49.5
+    },
+    {
+        "state": "Arkansas",
+        "year": 2024,
+        "mental_health_rank": 31,
+        "demographic": "age",
+        "air_quality": 43,
+        "green_space": 48.9
+    },
+    {
+        "state": "California",
+        "year": 2024,
+        "mental_health_rank": 17,
+        "demographic": "age",
+        "air_quality": 46,
+        "green_space": 75.5
+    },
+    {
+        "state": "Colorado",
+        "year": 2024,
+        "mental_health_rank": 46,
+        "demographic": "gender",
+        "air_quality": 47.1,
+        "green_space": 67.6
+    },
+    {
+        "state": "Connecticut",
+        "year": 2024,
+        "mental_health_rank": 2,
+        "demographic": "income",
+        "air_quality": 45,
+        "green_space": 72.5
+    },
+    {
+        "state": "Delaware",
+        "year": 2024,
+        "mental_health_rank": 18,
+        "demographic": "age",
+        "air_quality": 46.4,
+        "green_space": 62.5
+    },
+    {
+        "state": "Florida",
+        "year": 2024,
+        "mental_health_rank": 21,
+        "demographic": "age",
+        "air_quality": 38.9,
+        "green_space": 50.3
+    },
+    {
+        "state": "Georgia",
+        "year": 2024,
+        "mental_health_rank": 26,
+        "demographic": "gender",
+        "air_quality": 48.2,
+        "green_space": 54.1
+    },
+    {
+        "state": "Hawaii",
+        "year": 2024,
+        "mental_health_rank": 9,
+        "demographic": "income",
+        "air_quality": 21.2,
+        "green_space": 75.3
+    },
+    {
+        "state": "Idaho",
+        "year": 2024,
+        "mental_health_rank": 45,
+        "demographic": "age",
+        "air_quality": 44.3,
+        "green_space": 55.7
+    },
+    {
+        "state": "Illinois",
+        "year": 2024,
+        "mental_health_rank": 15,
+        "demographic": "gender",
+        "air_quality": 43.6,
+        "green_space": 59.8
+    },
+    {
+        "state": "Indiana",
+        "year": 2024,
+        "mental_health_rank": 24,
+        "demographic": "income",
+        "air_quality": 47.5,
+        "green_space": 48.6
+    },
+    {
+        "state": "Iowa",
+        "year": 2024,
+        "mental_health_rank": 25,
+        "demographic": "age",
+        "air_quality": 37.6,
+        "green_space": 55.4
+    },
+    {
+        "state": "Kansas",
+        "year": 2024,
+        "mental_health_rank": 22,
+        "demographic": "gender",
+        "air_quality": 42.8,
+        "green_space": 50
+    },
+    {
+        "state": "Kentucky",
+        "year": 2024,
+        "mental_health_rank": 19,
+        "demographic": "income",
+        "air_quality": 46.1,
+        "green_space": 40.2
+    },
+    {
+        "state": "Louisiana",
+        "year": 2024,
+        "mental_health_rank": 33,
+        "demographic": "age",
+        "air_quality": 40.4,
+        "green_space": 29.6
+    },
+    {
+        "state": "Maine",
+        "year": 2024,
+        "mental_health_rank": 3,
+        "demographic": "gender",
+        "air_quality": 36.5,
+        "green_space": 69.6
+    },
+    {
+        "state": "Maryland",
+        "year": 2024,
+        "mental_health_rank": 14,
+        "demographic": "income",
+        "air_quality": 47,
+        "green_space": 74.7
+    },
+    {
+        "state": "Massachusetts",
+        "year": 2024,
+        "mental_health_rank": 1,
+        "demographic": "age",
+        "air_quality": 41.4,
+        "green_space": 71.6
+    },
+    {
+        "state": "Michigan",
+        "year": 2024,
+        "mental_health_rank": 11,
+        "demographic": "gender",
+        "air_quality": 42.5,
+        "green_space": 66.1
+    },
+    {
+        "state": "Minnesota",
+        "year": 2024,
+        "mental_health_rank": 23,
+        "demographic": "income",
+        "air_quality": 38.3,
+        "green_space": 70.1
+    },
+    {
+        "state": "Mississippi",
+        "year": 2024,
+        "mental_health_rank": 34,
+        "demographic": "age",
+        "air_quality": 43.7,
+        "green_space": 34.3
+    },
+    {
+        "state": "Missouri",
+        "year": 2024,
+        "mental_health_rank": 44,
+        "demographic": "gender",
+        "air_quality": 44,
+        "green_space": 55.2
+    },
+    {
+        "state": "Montana",
+        "year": 2024,
+        "mental_health_rank": 49,
+        "demographic": "income",
+        "air_quality": 39.6,
+        "green_space": 57.6
+    },
+    {
+        "state": "Nebraska",
+        "year": 2024,
+        "mental_health_rank": 32,
+        "demographic": "age",
+        "air_quality": 37,
+        "green_space": 56.7
+    },
+    {
+        "state": "Nevada",
+        "year": 2024,
+        "mental_health_rank": 51,
+        "demographic": "gender",
+        "air_quality": 42.1,
+        "green_space": 61.2
+    },
+    {
+        "state": "New Hampshire",
+        "year": 2024,
+        "mental_health_rank": 8,
+        "demographic": "income",
+        "air_quality": 38.9,
+        "green_space": 66.8
+    },
+    {
+        "state": "New Jersey",
+        "year": 2024,
+        "mental_health_rank": 5,
+        "demographic": "age",
+        "air_quality": 44.1,
+        "green_space": 60
+    },
+    {
+        "state": "New Mexico",
+        "year": 2024,
+        "mental_health_rank": 30,
+        "demographic": "gender",
+        "air_quality": 42.1,
+        "green_space": 49.8
+    },
+    {
+        "state": "New York",
+        "year": 2024,
+        "mental_health_rank": 4,
+        "demographic": "gender",
+        "air_quality": 40.4,
+        "green_space": 77.7
+    },  
+    {
+        "state": "North Carolina",
+        "year": 2024,
+        "mental_health_rank": 29,
+        "demographic": "age",
+        "air_quality": 46.5,
+        "green_space": 59.6
+    },
+    {
+        "state": "North Dakota",
+        "year": 2024,
+        "mental_health_rank": 43,
+        "demographic": "gender",
+        "air_quality": 37,
+        "green_space": 47.1
+    },
+    {
+        "state": "Ohio",
+        "year": 2024,
+        "mental_health_rank": 20,
+        "demographic": "income",
+        "air_quality": 48.2,
+        "green_space": 55.3
+    },
+    {
+        "state": "Oklahoma",
+        "year": 2024,
+        "mental_health_rank": 38,
+        "demographic": "age",
+        "air_quality": 43.5,
+        "green_space": 44.9
+    },
+    {
+        "state": "Oregon",
+        "year": 2024,
+        "mental_health_rank": 47,
+        "demographic": "income",
+        "air_quality": 36.1,
+        "green_space": 65.7
+    },
+    {
+        "state": "Pennsylvania",
+        "year": 2024,
+        "mental_health_rank": 10,
+        "demographic": "age",
+        "air_quality": 45.6,
+        "green_space": 59.1
+    },
+    {
+        "state": "Rhode Island",
+        "year": 2024,
+        "mental_health_rank": 16,
+        "demographic": "gender",
+        "air_quality": 43.7,
+        "green_space": 65.2
+    },
+    {
+        "state": "South Carolina",
+        "year": 2024,
+        "mental_health_rank": 30,
+        "demographic": "income",
+        "air_quality": 44.8,
+        "green_space": 56.4
+    },
+    {
+        "state": "South Dakota",
+        "year": 2024,
+        "mental_health_rank": 28,
+        "demographic": "age",
+        "air_quality": 39.6,
+        "green_space": 66.8
+    },
+    {
+        "state": "Tennessee",
+        "year": 2024,
+        "mental_health_rank": 42,
+        "demographic": "gender",
+        "air_quality": 47.5,
+        "green_space": 52.7
+    },
+    {
+        "state": "Texas",
+        "year": 2024,
+        "mental_health_rank": 36,
+        "demographic": "income",
+        "air_quality": 41,
+        "green_space": 49.6
+    },
+    {
+        "state": "Utah",
+        "year": 2024,
+        "mental_health_rank": 27,
+        "demographic": "age",
+        "air_quality": 51.2,
+        "green_space": 56.6
+    },
+    {
+        "state": "Vermont",
+        "year": 2024,
+        "mental_health_rank": 7,
+        "demographic": "gender",
+        "air_quality": 38.5,
+        "green_space": 78.4
+    },
+    {
+        "state": "Virginia",
+        "year": 2024,
+        "mental_health_rank": 12,
+        "demographic": "income",
+        "air_quality": 45,
+        "green_space": 63.7
+    },
+    {
+        "state": "Washington",
+        "year": 2024,
+        "mental_health_rank": 41,
+        "demographic": "age",
+        "air_quality": 33.5,
+        "green_space": 69.7
+    },
+    {
+        "state": "West Virginia",
+        "year": 2024,
+        "mental_health_rank": 37,
+        "demographic": "gender",
+        "air_quality": 47.6,
+        "green_space": 19.3
+    },
+    {
+        "state": "Wisconsin",
+        "year": 2024,
+        "mental_health_rank": 12,
+        "demographic": "income",
+        "air_quality": 39.5,
+        "green_space": 61.0 
+    },
+    {
+        "state": "Wyoming",
+        "year": 2024,
+        "mental_health_rank": 40,
+        "demographic": "age",
+        "air_quality": 45,
+        "green_space": 36.4
+    }
+]
