@@ -46,16 +46,10 @@
 
         <label for="environment">Choose an environmental factor:</label>
         <select id="environment">
+            <option value="all">All</option>
             <option value="air_quality">Air Quality</option>
             <option value="green_space">Green Space</option>
         </select>
-    </div>
-
-    <div id="time-slider">
-        <!-- Time slider for visualizing changes over time -->
-        <label for="time">Select a time period:</label>
-        <input type="range" id="time" min="2024" max="2024" value="2024" step="1">
-        <span id="time-label">2024</span>
     </div>
 
     <div id="map"></div>
@@ -88,18 +82,28 @@
                     .enter().append("path")
                     .attr("class", "state")
                     .attr("d", path)
+                    .attr("stroke", "black")  // Set the default stroke color
+                    .attr("stroke-width", 1)  // Set the default stroke width
                     .on("mouseover", function(event, d) {
+                        const selectedEnvironmentalFactor = d3.select("#environment").node().value;
+                        let tooltipText = `State: ${d.properties.name}<br> Mental Health Rank: ${getMentalHealthRank(d.properties.name, mentalHealthData)}`;
+
+                        // Show only the selected environmental factor(s)
+                        if (selectedEnvironmentalFactor === "all") {
+                            tooltipText += `<br> Air Quality: ${getAirQuality(d.properties.name, mentalHealthData)} µg/m³<br> Green Space: ${getGreenSpace(d.properties.name, mentalHealthData)}%`;
+                        } else if (selectedEnvironmentalFactor === "air_quality") {
+                            tooltipText += `<br> Air Quality: ${getAirQuality(d.properties.name, mentalHealthData)} µg/m³`;
+                        } else if (selectedEnvironmentalFactor === "green_space") {
+                            tooltipText += `<br> Green Space: ${getGreenSpace(d.properties.name, mentalHealthData)}%`;
+                        }
+
                         tooltip.style("visibility", "visible")
-                            .html(`
-                                State: ${d.properties.name}<br>
-                                Mental Health Rank: ${getMentalHealthRank(d.properties.name, mentalHealthData)}<br>
-                                Air Quality: ${getAirQuality(d.properties.name, mentalHealthData)} µg/m³<br>
-                                Green Space: ${getGreenSpace(d.properties.name, mentalHealthData)}%`)
+                            .html(tooltipText)
                             .style("top", (event.pageY + 5) + "px")
                             .style("left", (event.pageX + 5) + "px");
                         
                         // Highlight the state by increasing stroke width
-                        d3.select(this).style("stroke", "black").style("stroke-width", "2");
+                        d3.select(this).style("stroke-width", "3");
                     })
                     .on("mousemove", function(event) {
                         tooltip.style("top", (event.pageY + 5) + "px")
@@ -108,8 +112,8 @@
                     .on("mouseout", function() {
                         tooltip.style("visibility", "hidden");
 
-                        // Remove highlight by resetting stroke width
-                        d3.select(this).style("stroke", "none").style("stroke-width", "1");
+                        // Reset stroke width back to normal
+                        d3.select(this).style("stroke-width", "1");
                     });
 
                 // Function to get mental health rank for each state
@@ -130,24 +134,39 @@
                     return stateData ? stateData.air_quality : "No data";
                 }
 
-                // Handle time slider change
-                d3.select("#time").on("input", function() {
-                    const year = this.value;
-                    d3.select("#time-label").text(year);
-                    // Update map based on selected time period
-                    updateMapForTime(year, mentalHealthData);
+                // Filter data by selected demographic
+                function filterDataByDemographic(demo) {
+                    if (demo === "all") {
+                        return mentalHealthData; // Show all states
+                    } else {
+                        return mentalHealthData.filter(d => d.demographic === demo);
+                    }
+                }
+
+                // Handle demographic filter change
+                d3.select("#demographic").on("change", function() {
+                    const selectedDemographic = this.value;
+                    const filteredData = filterDataByDemographic(selectedDemographic);
+
+                    // Update the map to only show states with data for the selected demographic
+                    updateMapForFilteredData(filteredData);
                 });
 
-                // Update the map with time-based data
-                function updateMapForTime(year, data) {
+                // Function to update the map with filtered data
+                function updateMapForFilteredData(filteredData) {
                     svg.selectAll(".state")
-                        .transition()
-                        .duration(500)
                         .style("fill", function(d) {
-                            const stateData = data.find(item => item.state === d.properties.name && item.year == year);
-                            return stateData ? getColorForHealthRank(stateData) : "#ccc";
+                            const stateData = filteredData.find(item => item.state === d.properties.name);
+                            return stateData ? getColorForHealthRank(stateData) : "#ccc"; // Use default color if no data for the state
                         });
                 }
+
+                // Handle environmental factor filter change
+                d3.select("#environment").on("change", function() {
+                    const selectedFactor = this.value;
+                    // Reapply the filter based on the selected environmental factor
+                    updateMapForFilteredData(mentalHealthData);
+                });
 
                 // Function to determine color based on mental health rank
                 function getColorForHealthRank(stateData) {
@@ -161,8 +180,8 @@
                     return "red";
                 }
 
-                // Initialize map for the first time period (2024)
-                updateMapForTime(2024, mentalHealthData);
+                // Initialize map for the first time (all data loaded)
+                updateMapForFilteredData(mentalHealthData);
             });
         });
 
