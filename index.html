@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +12,12 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         #map {
             width: 100%;
             height: 600px;
         }
+
         .tooltip {
             position: absolute;
             padding: 10px;
@@ -25,13 +28,17 @@
         }
     </style>
 </head>
+
 <body>
 
     <h1>Interactive Visualization of Environmental Factors and Mental Health</h1>
     <p>
-        We’re creating an interactive visualization to explore how environmental factors affect mental health and well-being.
-        Users can filter data by demographic (age, gender, income) and environmental variables (air quality, green space).
-        Key features include a geographic map that shows trends by region, tooltips with additional data, and drop-down filters to help users identify patterns more clearly.
+        We’re creating an interactive visualization to explore how environmental factors affect mental health and
+        well-being.
+        Users can filter data by demographic (age, gender, income) and environmental variables (air quality, green
+        space).
+        Key features include a geographic map that shows trends by region, tooltips with additional data, and drop-down
+        filters to help users identify patterns more clearly.
     </p>
 
     <div id="filters">
@@ -52,8 +59,15 @@
         </select>
     </div>
 
-    <div id="map"></div>
-    <div class="tooltip" id="tooltip"></div>
+    <div style="display:flex; flex-direction: row;">
+        <div id="map"></div>
+        <div class="tooltip" id="tooltip"></div>
+        <div style="display:flex; flex-direction: column;">
+            <svg id="scatter" width="400" height="400" style="padding-bottom: 20px;"></svg>
+            <svg id="scatter2"></svg>
+        </div>
+    </div>
+
 
     <script>
         // Set up dimensions and map projection
@@ -66,11 +80,105 @@
             .attr("width", width)
             .attr("height", height);
 
+        // Set up scatter plot
+
+        const margins = {
+            top: 10, right: 10, bottom: 50, left: 50
+        };
+
+        const plot = d3.select("#scatter");
+        let chartG = plot.append("g")
+            .attr("class", "chart")
+            .attr('transform', `translate(${margins.left}, ${margins.top})`);
+
+        let plotwidth = 400;
+        let plotheight = 400;
+
         const tooltip = d3.select("#tooltip");
 
         // Load the data (GeoJSON and JSON)
-        d3.json("us-states.topojson").then(function(geoData) {
-            d3.json("US_Environmental_and_mental_health_data.json").then(function(mentalHealthData) {
+        d3.json("us-states.topojson").then(function (geoData) {
+            d3.json("US_Environmental_and_mental_health_data.json").then(function (mentalHealthData) {
+
+                //Create scatterplot
+                let yScale = d3.scaleLinear()
+                    .domain([50, 1])
+                    .range([plotheight - margins.top - margins.bottom, margins.bottom])
+
+                let airqualityExtent = d3.extent(mentalHealthData, d => d["air_quality"]);
+                let xScale = d3.scaleLinear()
+                    .domain(airqualityExtent)
+                    .range([margins.left, plotwidth]);
+
+                let leftAxis = d3.axisLeft(yScale);
+                let leftAxisG = plot.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", `translate(${margins.left - 10}, ${margins.top})`)
+                    .call(leftAxis);
+
+
+                let bottomAxis = d3.axisBottom(xScale);
+                let bottomAxisG = plot.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", `translate(0, ${plotheight - margins.bottom})`)
+                    .call(bottomAxis);
+
+                //Adding titles
+                chartG.append("text")
+                    .attr("x", -plotheight / 2)
+                    .attr("y", -margins.left + 10)
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
+                    .text("Mental Health Rank");
+
+                chartG.append("text")
+                    .attr("x", plotwidth / 2.5)
+                    .attr("y", plotheight + margins.bottom + margins.top)
+                    .attr("text-anchor", "middle")
+                    .text("Air Quality");
+
+                // Function to determine color based on mental health rank
+                function getColorForHealthRank(stateData) {
+                    const rank = stateData.mental_health_rank;
+
+                    // Green for the top 15 states
+                    if (rank <= 15) return "green";
+                    // Yellow for the next 15 states
+                    if (rank <= 30) return "yellow";
+                    // Red for the remaining states
+                    return "red";
+                }
+
+                //Add points on scatter plot
+                mentalHealthData.forEach(point => {
+                    plot.append("circle")
+                        .attr("id", `circle-${point["mental_health_rank"]}`)
+                        .attr("r", 4)
+                        .attr("opacity", 0.7)
+                        .attr("cx", xScale(point["air_quality"]))
+                        .attr("cy", yScale(point["mental_health_rank"]))
+                        .style("fill", getColorForHealthRank(point));
+
+                });
+
+
+                d3.selectAll("circle")
+                    .on("mouseover", function (e, d) {
+                        d3.select(e.target)
+                            .transition()
+                            .duration(100)
+                            .attr("r", 10)
+                            .style("opacity", 1);
+                    })
+
+                    .on("mouseout", function () {
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .attr("r", 4)
+                            .style("opacity", 0.7);
+                    });
+
 
                 // Convert TopoJSON to GeoJSON
                 const states = topojson.feature(geoData, geoData.objects.states).features;
@@ -81,9 +189,9 @@
                     .enter().append("path")
                     .attr("class", "state")
                     .attr("d", path)
-                    .attr("stroke", "black") 
-                    .attr("stroke-width", 1)  
-                    .on("mouseover", function(event, d) {
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 1)
+                    .on("mouseover", function (event, d) {
                         const selectedEnvironmentalFactor = d3.select("#environment").node().value;
                         let tooltipText = `State: ${d.properties.name}<br> Mental Health Rank: ${getMentalHealthRank(d.properties.name, mentalHealthData)}`;
 
@@ -100,19 +208,31 @@
                             .html(tooltipText)
                             .style("top", (event.pageY + 5) + "px")
                             .style("left", (event.pageX + 5) + "px");
-                        
+
                         // Highlight the state by increasing stroke width
                         d3.select(this).style("stroke-width", "3");
+
+                        d3.select(`#circle-${getMentalHealthRank(d.properties.name, mentalHealthData)}`)
+                            .transition()
+                            .duration(100)
+                            .attr("r", 15)
+                            .style("opacity", 1);
+
                     })
-                    .on("mousemove", function(event) {
+                    .on("mousemove", function (event) {
                         tooltip.style("top", (event.pageY + 5) + "px")
                             .style("left", (event.pageX + 5) + "px");
                     })
-                    .on("mouseout", function() {
+                    .on("mouseout", function (event, d) {
                         tooltip.style("visibility", "hidden");
 
                         // Reset stroke width back to normal
                         d3.select(this).style("stroke-width", "1");
+                        d3.select(`#circle-${getMentalHealthRank(d.properties.name, mentalHealthData)}`)
+                            .transition()
+                            .duration(200)
+                            .attr("r", 4)
+                            .style("opacity", 0.7);
                     });
 
                 // Function to get mental health rank for each state
@@ -143,7 +263,7 @@
                 }
 
                 // Handle demographic filter change
-                d3.select("#demographic").on("change", function() {
+                d3.select("#demographic").on("change", function () {
                     const selectedDemographic = this.value;
                     const filteredData = filterDataByDemographic(selectedDemographic);
 
@@ -154,30 +274,18 @@
                 // Function to update the map with filtered data
                 function updateMapForFilteredData(filteredData) {
                     svg.selectAll(".state")
-                        .style("fill", function(d) {
+                        .style("fill", function (d) {
                             const stateData = filteredData.find(item => item.state === d.properties.name);
                             return stateData ? getColorForHealthRank(stateData) : "#ccc"; // Use default color if no data for the state
                         });
                 }
 
                 // Handle environmental factor filter change
-                d3.select("#environment").on("change", function() {
+                d3.select("#environment").on("change", function () {
                     const selectedFactor = this.value;
                     // Reapply the filter based on the selected environmental factor
                     updateMapForFilteredData(mentalHealthData);
                 });
-
-                // Function to determine color based on mental health rank
-                function getColorForHealthRank(stateData) {
-                    const rank = stateData.mental_health_rank;
-
-                    // Green for the top 15 states
-                    if (rank <= 15) return "green";
-                    // Yellow for the next 15 states
-                    if (rank <= 30) return "yellow";
-                    // Red for the remaining states
-                    return "red";
-                }
 
                 // Initialize map for the first time (all data loaded)
                 updateMapForFilteredData(mentalHealthData);
@@ -186,4 +294,5 @@
 
     </script>
 </body>
+
 </html>
