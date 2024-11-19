@@ -26,6 +26,11 @@
             border-radius: 5px;
             visibility: hidden;
         }
+
+        button {
+            width: 100px;
+            height: 30px;
+        }
     </style>
 </head>
 
@@ -59,12 +64,17 @@
         </select>
     </div>
 
-    <div style="display:flex; flex-direction: row;">
+    <div style="display:flex; flex-direction: row; justify-content: center;">
         <div id="map"></div>
         <div class="tooltip" id="tooltip"></div>
         <div style="display:flex; flex-direction: column;">
-            <svg id="scatter" width="400" height="400" style="padding-bottom: 20px;"></svg>
-            <svg id="scatter2"></svg>
+            <svg id="scatter" width="400" height="400" style="padding-bottom: 10px;"></svg>
+            <svg id="scatter2" width="400" height="400"></svg>
+            <div style="display:flex; flex-direction: row;">
+                <button id="airbutton" style="padding-right: 10px;">Air Quality</button>
+                <button id="greenbutton">Green Space</button>
+            </div>
+
         </div>
     </div>
 
@@ -80,14 +90,19 @@
             .attr("width", width)
             .attr("height", height);
 
-        // Set up scatter plot
-
+        // Set up both scatter plots
         const margins = {
             top: 10, right: 10, bottom: 50, left: 50
         };
 
         const plot = d3.select("#scatter");
         let chartG = plot.append("g")
+            .attr("class", "chart")
+            .attr('transform', `translate(${margins.left}, ${margins.top})`);
+
+        const plot2 = d3.select("#scatter2")
+            .style("display", "none");
+        let chartG2 = plot2.append("g")
             .attr("class", "chart")
             .attr('transform', `translate(${margins.left}, ${margins.top})`);
 
@@ -100,7 +115,7 @@
         d3.json("us-states.topojson").then(function (geoData) {
             d3.json("US_Environmental_and_mental_health_data.json").then(function (mentalHealthData) {
 
-                //Create scatterplot
+                //Create scatterplot with air quality on x axis
                 let yScale = d3.scaleLinear()
                     .domain([50, 1])
                     .range([plotheight - margins.top - margins.bottom, margins.bottom])
@@ -122,6 +137,25 @@
                     .attr("class", "x axis")
                     .attr("transform", `translate(0, ${plotheight - margins.bottom})`)
                     .call(bottomAxis);
+
+                //Second scatter plot with green space on x axis
+                let greenspaceExtent = d3.extent(mentalHealthData, d => d["green_space"])
+                let greenspaceScale = d3.scaleLinear()
+                    .domain(greenspaceExtent)
+                    .range([margins.left, plotwidth])
+
+                let leftAxis2 = d3.axisLeft(yScale);
+                let leftAxisG2 = plot2.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", `translate(${margins.left - 10}, ${margins.top})`)
+                    .call(leftAxis2);
+
+
+                let bottomAxis2 = d3.axisBottom(greenspaceScale);
+                let bottomAxisG2 = plot2.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", `translate(0, ${plotheight - margins.bottom})`)
+                    .call(bottomAxis2);
 
                 //Adding titles
                 chartG.append("text")
@@ -149,7 +183,7 @@
                     return "red";
                 }
 
-                //Add points on scatter plot
+                //Add points on scatter plots
                 mentalHealthData.forEach(point => {
                     plot.append("circle")
                         .attr("id", `circle-${point["mental_health_rank"]}`)
@@ -160,6 +194,36 @@
                         .style("fill", getColorForHealthRank(point));
 
                 });
+
+                mentalHealthData.forEach(point => {
+                    plot2.append("circle")
+                        .attr("id", `circle2-${point["mental_health_rank"]}`)
+                        .attr("r", 4)
+                        .attr("opacity", 0.7)
+                        .attr("cx", greenspaceScale(point["green_space"]))
+                        .attr("cy", yScale(point["mental_health_rank"]))
+                        .style("fill", getColorForHealthRank(point));
+
+                });
+
+
+                //Buttons to switch the graphs
+                d3.select("#airbutton")
+                    .on("click", function (e, d) {
+                        d3.select("#scatter2")
+                            .style("display", "none")
+                        d3.select("#scatter")
+                            .style("display", "block")
+                    });
+
+                d3.select("#greenbutton")
+                    .on("click", function (e, d) {
+                        d3.select("#scatter")
+                            .style("display", "none")
+                        d3.select("#scatter2")
+                            .style("display", "block")
+                    });
+
 
 
                 d3.selectAll("circle")
@@ -217,6 +281,11 @@
                             .duration(100)
                             .attr("r", 15)
                             .style("opacity", 1);
+                        d3.select(`#circle2-${getMentalHealthRank(d.properties.name, mentalHealthData)}`)
+                            .transition()
+                            .duration(100)
+                            .attr("r", 15)
+                            .style("opacity", 1);
 
                     })
                     .on("mousemove", function (event) {
@@ -229,6 +298,11 @@
                         // Reset stroke width back to normal
                         d3.select(this).style("stroke-width", "1");
                         d3.select(`#circle-${getMentalHealthRank(d.properties.name, mentalHealthData)}`)
+                            .transition()
+                            .duration(200)
+                            .attr("r", 4)
+                            .style("opacity", 0.7);
+                        d3.select(`#circle2-${getMentalHealthRank(d.properties.name, mentalHealthData)}`)
                             .transition()
                             .duration(200)
                             .attr("r", 4)
