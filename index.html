@@ -101,17 +101,18 @@
 
     <h1>Interactive Visualization of Environmental Factors and Mental Health</h1>
     <p>
-        We’re creating an interactive visualization to explore how environmental factors affect mental health and
-        well-being.
-        Users can filter data by demographic (age, gender, income) and environmental variables (air quality, green
-        space).
-        Key features include a geographic map that shows trends by region, tooltips with additional data, and drop-down
-        filters to help users identify patterns more clearly.
+        We created an interactive platform to visualize the connection between environmental factors and mental
+        health outcomes across different states. Users can explore this relationship through our U.S geographic map, 
+        its correlating scatterplot, and dynamic filters. Key features include a geographic map and scatterplot that 
+        highlights trends by state, detailed tooltips showing state-level data, and drop-down filters to help users 
+        identify patterns more clearly. This tool is designed to help researchers, policymakers, and everyday people 
+        get a clearer picture of how the environment affects mental well-being. The goal is to support smarter, 
+        data-driven choices that lead to healthier and happier communities.
     </p>
 
     <div id="filters">
         <!-- Dropdowns for filtering -->
-        <label for="demographic">Choose a demographic:</label>
+        <label for="demographic">Choose a mental health rating:</label>
         <select id="demographic">
             <option value="All">All</option>
             <option value="Best">Best</option>
@@ -470,7 +471,6 @@
                             .style("fill", getColorForHealthRank(point));
                     });
                 }
-
 
                 // Handle environmental factor filter change
                 d3.select("#environment").on("change", function () {
