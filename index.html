@@ -53,13 +53,13 @@
     </p>
 
     <div id="filters">
-        <!-- Dropdowns for filtering (e.g., by demographic, environmental factors) -->
+        <!-- Dropdowns for filtering -->
         <label for="demographic">Choose a demographic:</label>
         <select id="demographic">
-            <option value="all">All</option>
-            <option value="age">Age</option>
-            <option value="gender">Gender</option>
-            <option value="income">Income</option>
+            <option value="All">All</option>
+            <option value="Best">Best</option>
+            <option value="Middle">Middle</option>
+            <option value="Worst">Worst</option>
         </select>
 
         <label for="environment">Choose an environmental factor:</label>
@@ -355,11 +355,20 @@
 
                 // Filter data by selected demographic
                 function filterDataByDemographic(demo) {
-                    if (demo === "all") {
-                        return mentalHealthData; // Show all states
-                    } else {
-                        return mentalHealthData.filter(d => d.demographic === demo);
+
+                    if (demo === "Best") {
+                        return mentalHealthData.filter(d => d.mental_health_rank <= 15);
                     }
+                    if (demo === "Middle") {
+                        return mentalHealthData.filter(d => d.mental_health_rank <= 30 && d.mental_health_rank > 15);
+                    }
+                    if (demo === "Worst") {
+                        return mentalHealthData.filter(d => d.mental_health_rank > 30);
+                    }
+                    else {
+                        return mentalHealthData;
+                    }
+
                 }
 
                 // Handle demographic filter change
