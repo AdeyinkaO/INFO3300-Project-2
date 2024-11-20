@@ -66,8 +66,27 @@
         }
 
         button {
-            width: 100px;
-            height: 30px;
+            width: 120px;
+            height: 35px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        button:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        button.selected {
+            background-color: #007bff;
+            color: #ffffff;
+            border: 2px solid #0056b3;
         }
 
         .selected {
