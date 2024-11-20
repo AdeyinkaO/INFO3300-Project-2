@@ -31,6 +31,12 @@
             width: 100px;
             height: 30px;
         }
+
+        .selected {
+            background-color: #007bff;
+            color: white;
+            border: 2px solid #0056b3;
+        }
     </style>
 </head>
 
@@ -64,14 +70,15 @@
         </select>
     </div>
 
-    <div style="display:flex; flex-direction: row; justify-content: center;">
+    <div
+        style="display:flex; flex-direction: row; justify-content: center; align-items: center; align-content: flex-start;">
         <div id="map"></div>
         <div class="tooltip" id="tooltip"></div>
         <div style="display:flex; flex-direction: column;">
             <svg id="scatter" width="400" height="400" style="padding-bottom: 10px;"></svg>
             <svg id="scatter2" width="400" height="400"></svg>
-            <div style="display:flex; flex-direction: row;">
-                <button id="airbutton" style="padding-right: 10px;">Air Quality</button>
+            <div style="display:flex; flex-direction: row; justify-content: center; gap:10px; ">
+                <button id="airbutton" class="selected" style="padding-right: 10px;">Air Quality</button>
                 <button id="greenbutton">Green Space</button>
             </div>
 
@@ -106,8 +113,8 @@
             .attr("class", "chart")
             .attr('transform', `translate(${margins.left}, ${margins.top})`);
 
-        let plotwidth = 400;
-        let plotheight = 400;
+        let plotwidth = 350;
+        let plotheight = 350;
 
         const tooltip = d3.select("#tooltip");
 
@@ -160,16 +167,29 @@
                 //Adding titles
                 chartG.append("text")
                     .attr("x", -plotheight / 2)
-                    .attr("y", -margins.left + 10)
+                    .attr("y", -margins.left + 15)
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
+                    .text("Mental Health Rank");
+
+                chartG2.append("text")
+                    .attr("x", -plotheight / 2)
+                    .attr("y", -margins.left + 15)
                     .attr("text-anchor", "middle")
                     .attr("transform", "rotate(-90)")
                     .text("Mental Health Rank");
 
                 chartG.append("text")
                     .attr("x", plotwidth / 2.5)
-                    .attr("y", plotheight + margins.bottom + margins.top)
+                    .attr("y", plotheight - 10)
                     .attr("text-anchor", "middle")
-                    .text("Air Quality");
+                    .text("Air Quality (ug/m^3)");
+
+                chartG2.append("text")
+                    .attr("x", plotwidth / 2.5)
+                    .attr("y", plotheight - 10)
+                    .attr("text-anchor", "middle")
+                    .text("Green Space (%)");
 
                 // Function to determine color based on mental health rank
                 function getColorForHealthRank(stateData) {
@@ -214,6 +234,9 @@
                             .style("display", "none")
                         d3.select("#scatter")
                             .style("display", "block")
+
+                        d3.selectAll("button").classed("selected", false);
+                        d3.select(this).classed("selected", true);
                     });
 
                 d3.select("#greenbutton")
@@ -222,10 +245,13 @@
                             .style("display", "none")
                         d3.select("#scatter2")
                             .style("display", "block")
+
+                        d3.selectAll("button").classed("selected", false);
+                        d3.select(this).classed("selected", true);
                     });
 
 
-
+                //Hovering on circles leads to location on graph
                 d3.selectAll("circle")
                     .on("mouseover", function (e, d) {
                         d3.select(e.target)
@@ -343,6 +369,7 @@
 
                     // Update the map to only show states with data for the selected demographic
                     updateMapForFilteredData(filteredData);
+                    updatePlotsForFilteredData(filteredData);
                 });
 
                 // Function to update the map with filtered data
@@ -353,6 +380,31 @@
                             return stateData ? getColorForHealthRank(stateData) : "#ccc"; // Use default color if no data for the state
                         });
                 }
+
+                //Function to update the scatter plots
+                function updatePlotsForFilteredData(filteredData) {
+                    d3.selectAll("circle")
+                        .remove();
+                    filteredData.forEach(point => {
+                        plot.append("circle")
+                            .attr("id", `circle-${point["mental_health_rank"]}`)
+                            .attr("r", 4)
+                            .attr("opacity", 0.7)
+                            .attr("cx", xScale(point["air_quality"]))
+                            .attr("cy", yScale(point["mental_health_rank"]))
+                            .style("fill", getColorForHealthRank(point));
+                    });
+                    filteredData.forEach(point => {
+                        plot2.append("circle")
+                            .attr("id", `circle2-${point["mental_health_rank"]}`)
+                            .attr("r", 4)
+                            .attr("opacity", 0.7)
+                            .attr("cx", greenspaceScale(point["green_space"]))
+                            .attr("cy", yScale(point["mental_health_rank"]))
+                            .style("fill", getColorForHealthRank(point));
+                    });
+                }
+
 
                 // Handle environmental factor filter change
                 d3.select("#environment").on("change", function () {
