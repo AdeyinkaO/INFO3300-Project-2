@@ -11,6 +11,44 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff
+        }
+
+        p {
+        text-align: center;
+        max-width: 800px;
+        margin: 10px auto 30px;
+        padding: 0 20px;
+        font-size: 1rem;
+        }
+
+        #filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        #filters label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        #filters select {
+            padding: 5px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         #map {
@@ -28,8 +66,27 @@
         }
 
         button {
-            width: 100px;
-            height: 30px;
+            width: 120px;
+            height: 35px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #007bff;
+            background-color: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        button:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        button.selected {
+            background-color: #007bff;
+            color: #ffffff;
+            border: 2px solid #0056b3;
         }
 
         .selected {
